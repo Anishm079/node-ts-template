@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, NextFunction } from "express";
+import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import router from "./routes";
@@ -15,7 +15,7 @@ app.use(cors({
 
 app.use("/api",router);
 
-app.get("/",(req:Request,res:Response,next:NextFunction)=>{
+app.get("/",(req:Request,res:Response)=>{
     res.send("Hello World");
 });
 

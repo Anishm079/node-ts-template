@@ -1,5 +1,5 @@
 import mongoose,{Document,Model,Schema} from "mongoose";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt"
 import { emailRegexPattern } from "../constants";
 
