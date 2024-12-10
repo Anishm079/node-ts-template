@@ -1,7 +1,6 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
-// import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { emailRegexPattern } from "../constants";
+import { emailRegexPattern } from "../utils/emailUtils";
 
 export interface IUser extends Document {
   name: string;
@@ -26,45 +25,49 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, "Please Enter Your Name"],
+      required: [true, "Please Enter Your Email"],
       unique: true,
       validate: {
-        validator: (value: string) => {
-          return emailRegexPattern.test(value);
-        },
+        validator: (value: string) => emailRegexPattern.test(value),
         message: "Please Enter a Valid Email",
       },
     },
     password: {
       type: String,
-      required: [true, "Please enter your password"],
+      required: [true, "Please Enter Your Password"],
       select: false,
-      minLength: [6, "Password must be atleast 6 characters"],
+      minlength: [6, "Password must be at least 6 characters"],
     },
-    isVarified: {
+    isVerified: {
       type: Boolean,
       default: false,
     },
     avatar: {
-      public_id: String,
-      url: String,
+      public_id: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
     },
     role: {
       type: String,
       default: "user",
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-userSchema.pre("save", async function (next) {
+userSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
-    next();
+    return next();
   }
-  this.password = await bcrypt.hash(this.password as string, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-const userModel: Model<IUser> = mongoose.model("user", userSchema);
+const userModel: Model<IUser> = mongoose.model<IUser>("User", userSchema);
 
 export default userModel;
